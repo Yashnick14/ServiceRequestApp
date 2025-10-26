@@ -8,40 +8,69 @@ export const createOrUpdateAssignment = async (req, res) => {
     const { request_id } = req.params;
     const { driver_id, vehicle_id, scheduled_time } = req.body;
 
-    // Validate request existence
+    // Request must exist
     const request = await ServiceRequest.findByPk(request_id);
     if (!request) {
-      return res.status(404).json({ message: "Service request not found" });
+      return res.status(404).json({
+        message: "Validation failed",
+        errors: { request_id: "Service request not found" },
+      });
     }
 
-    // Validate driver and vehicle existence
+    // Check if driver and vehicle exist
     const driver = await Driver.findByPk(driver_id);
-    const vehicle = await Vehicle.findByPk(vehicle_id);
+    if (!driver) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: { driver_id: "Driver not found" },
+      });
+    }
 
-    if (!driver || !vehicle) {
-      return res.status(400).json({ message: "Invalid driver or vehicle" });
+    const vehicle = await Vehicle.findByPk(vehicle_id);
+    if (!vehicle) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: { vehicle_id: "Vehicle not found" },
+      });
+    }
+
+    // Ensure scheduled time is in the future
+    if (new Date(scheduled_time) < new Date()) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: { scheduled_time: "Scheduled time must be in the future" },
+      });
     }
 
     // Create or update assignment
-    const [assignment] = await Assignment.upsert({
-      request_id,
-      driver_id,
-      vehicle_id,
-      scheduled_time,
-    });
+    let assignment = await Assignment.findOne({ where: { request_id } });
 
-    // Update request status
+    if (assignment) {
+      assignment.driver_id = driver_id;
+      assignment.vehicle_id = vehicle_id;
+      assignment.scheduled_time = scheduled_time;
+      await assignment.save();
+    } else {
+      assignment = await Assignment.create({
+        request_id,
+        driver_id,
+        vehicle_id,
+        scheduled_time,
+      });
+    }
+
+    // Update related request status
     request.status = "scheduled";
     await request.save();
 
-    res.json({
+    res.status(200).json({
       message: "Request scheduled successfully",
-      assignment,
+      data: assignment,
     });
   } catch (error) {
     res.status(500).json({
       message: "Failed to schedule request",
-      error: error.message,
+      errors: { server: error.message },
     });
   }
 };

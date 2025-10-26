@@ -1,7 +1,6 @@
 import ServiceRequest from "../models/ServiceRequest.js";
 import { Op } from "sequelize";
 
-// Create a new service request (customer)
 export const createRequest = async (req, res) => {
   try {
     const {
@@ -14,17 +13,12 @@ export const createRequest = async (req, res) => {
       notes,
     } = req.body;
 
-    if (
-      !customer_name ||
-      !phone ||
-      !pickup_location ||
-      !dropoff_location ||
-      !pickup_time ||
-      !passengers
-    ) {
-      return res
-        .status(400)
-        .json({ message: "All required fields must be filled." });
+    // Business logic validation
+    if (new Date(pickup_time) < new Date()) {
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: { pickup_time: "Pickup time must be in the future" },
+      });
     }
 
     const newRequest = await ServiceRequest.create({
@@ -37,20 +31,18 @@ export const createRequest = async (req, res) => {
       notes,
     });
 
-    res
-      .status(201)
-      .json({
-        message: "Trip request submitted successfully",
-        request: newRequest,
-      });
+    res.status(201).json({
+      message: "Trip request submitted successfully",
+      data: newRequest,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to create request", error: error.message });
+    res.status(500).json({
+      message: "Failed to create service request",
+      errors: { server: error.message },
+    });
   }
 };
 
-// Get all service requests (admin only, with pagination + search)
 export const getRequests = async (req, res) => {
   try {
     const { page = 1, limit = 10, search = "" } = req.query;
@@ -72,20 +64,21 @@ export const getRequests = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.json({
+    res.status(200).json({
+      message: "Requests fetched successfully",
       total: count,
       page: Number(page),
       pages: Math.ceil(count / limit),
-      requests: rows,
+      data: rows,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch requests", error: error.message });
+    res.status(500).json({
+      message: "Failed to fetch requests",
+      errors: { server: error.message },
+    });
   }
 };
 
-// Update request status (approve/reject/schedule)
 export const updateRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -93,39 +86,52 @@ export const updateRequestStatus = async (req, res) => {
 
     const validStatuses = ["pending", "approved", "rejected", "scheduled"];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
+      return res.status(400).json({
+        message: "Validation failed",
+        errors: { status: "Invalid status value" },
+      });
     }
 
     const request = await ServiceRequest.findByPk(id);
     if (!request) {
-      return res.status(404).json({ message: "Request not found" });
+      return res.status(404).json({
+        message: "Validation failed",
+        errors: { request: "Service request not found" },
+      });
     }
 
     request.status = status;
     await request.save();
 
-    res.json({ message: "Request status updated successfully", request });
+    res.status(200).json({
+      message: "Request status updated successfully",
+      data: request,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to update status", error: error.message });
+    res.status(500).json({
+      message: "Failed to update status",
+      errors: { server: error.message },
+    });
   }
 };
 
-// Delete request
 export const deleteRequest = async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await ServiceRequest.destroy({ where: { id } });
 
     if (!deleted) {
-      return res.status(404).json({ message: "Request not found" });
+      return res.status(404).json({
+        message: "Validation failed",
+        errors: { request: "Service request not found" },
+      });
     }
 
-    res.json({ message: "Request deleted successfully" });
+    res.status(200).json({ message: "Request deleted successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete request", error: error.message });
+    res.status(500).json({
+      message: "Failed to delete request",
+      errors: { server: error.message },
+    });
   }
 };
