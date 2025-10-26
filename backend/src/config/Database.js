@@ -12,3 +12,5 @@ export const sequelize = new Sequelize(
     logging: false,
   }
 );
+
+export default sequelize;
