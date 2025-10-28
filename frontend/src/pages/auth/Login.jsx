@@ -9,10 +9,12 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
+  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -24,8 +26,10 @@ const Login = () => {
     try {
       setLoading(true);
       const res = await axiosClient.post("/auth/login", formData);
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.data.token);
       toast.success("Login successful!");
+
+      // Redirect to Admin Dashboard after successful login
       navigate("/admin");
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
@@ -37,10 +41,10 @@ const Login = () => {
   return (
     <div
       className="relative min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/loginbg2.jpg')" }}
+      style={{ backgroundImage: "url('/images/customerbg.jpg')" }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center w-full px-4">
@@ -128,24 +132,6 @@ const Login = () => {
                 {loading ? "Signing in..." : "Login"}
               </button>
             </form>
-          </div>
-        )}
-
-        {/* Step 3: Customer placeholder */}
-        {role === "customer" && (
-          <div className="bg-white bg-opacity-90 backdrop-blur-md shadow-lg rounded-xl p-8 mt-6 w-full max-w-md text-center">
-            <button
-              onClick={() => setRole("")}
-              className="text-sm text-blue-600 mb-4 hover:underline"
-            >
-              ← Back
-            </button>
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Customer Portal (Coming Soon)
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Soon you’ll be able to submit trip requests directly from here.
-            </p>
           </div>
         )}
       </div>

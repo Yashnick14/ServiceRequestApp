@@ -8,210 +8,204 @@ const TripRequestForm = () => {
     phone: "",
     pickup_location: "",
     dropoff_location: "",
+    pickup_date: "",
     pickup_time: "",
     passengers: "",
     notes: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+
+  const validate = () => {
+    const rules = {
+      customer_name: "Full name is required",
+      phone: "Valid 10-digit phone number required",
+      pickup_location: "Pickup location required",
+      dropoff_location: "Dropoff location required",
+      pickup_date: "Pickup date required",
+      pickup_time: "Pickup time required",
+      passengers: "Number of passengers required",
+    };
+
+    const newErrors = {};
+    Object.entries(rules).forEach(([key, msg]) => {
+      const val = formData[key]?.trim?.() || formData[key];
+      if (!val) newErrors[key] = msg;
+      if (key === "phone" && !/^[0-9]{10}$/.test(formData.phone))
+        newErrors.phone = msg;
+    });
+
+    // Prevent past dates
+    if (formData.pickup_date) {
+      const today = new Date().setHours(0, 0, 0, 0);
+      const selected = new Date(formData.pickup_date).setHours(0, 0, 0, 0);
+      if (selected < today)
+        newErrors.pickup_date = "Please select a future date.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Basic client-side validation
-    const {
-      customer_name,
-      phone,
-      pickup_location,
-      dropoff_location,
-      pickup_time,
-      passengers,
-    } = formData;
-
-    if (
-      !customer_name ||
-      !phone ||
-      !pickup_location ||
-      !dropoff_location ||
-      !pickup_time ||
-      !passengers
-    ) {
-      toast.error("Please fill in all required fields.");
+    if (!validate()) {
+      toast.error("Please enter valid details");
       return;
     }
 
+    const pickup_time = `${formData.pickup_date} ${formData.pickup_time}`;
+
     try {
       setLoading(true);
-      await axiosClient.post("/requests", formData);
-      toast.success("Trip request submitted successfully!");
+      await axiosClient.post("/requests", { ...formData, pickup_time });
+      toast.success("Trip request submitted!");
       setSubmitted(true);
       setFormData({
         customer_name: "",
         phone: "",
         pickup_location: "",
         dropoff_location: "",
+        pickup_date: "",
         pickup_time: "",
         passengers: "",
         notes: "",
       });
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to submit your request."
-      );
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to submit request");
     } finally {
       setLoading(false);
     }
   };
 
-  if (submitted) {
+  if (submitted)
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 text-center px-4">
-        <h2 className="text-3xl font-semibold text-green-700 mb-4">
-          ✅ Request Submitted!
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Our coordinator will review your trip and contact you soon.
-        </p>
-        <button
-          onClick={() => setSubmitted(false)}
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition"
-        >
-          Submit Another Request
-        </button>
+      <div
+        className="h-screen bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/images/bus-bg.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-center text-white px-4">
+          <h2 className="text-3xl font-semibold mb-4">Request Submitted!</h2>
+          <p className="text-gray-200 mb-6 max-w-md">
+            Our coordinator will contact you soon.
+          </p>
+          <button
+            onClick={() => setSubmitted(false)}
+            className="bg-green-600 text-white px-5 py-2 rounded-md hover:bg-green-700 transition"
+          >
+            Submit Another Request
+          </button>
+        </div>
       </div>
     );
-  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-10 px-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8">
+    <div
+      className="min-h-screen bg-cover bg-center relative flex items-center justify-center py-10 px-4"
+      style={{
+        backgroundImage: "url('/images/customerbg.jpg')",
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+
+      {/* Form container */}
+      <div className="relative bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl w-full max-w-2xl p-8">
         <h1 className="text-3xl font-semibold text-center mb-6 text-gray-800">
-          🚌 Trip Request Form
+          Trip Request Form
         </h1>
         <p className="text-center text-gray-500 mb-8">
-          Please fill in your details below to request a coach service.
+          Fill in your details to request a coach service.
         </p>
 
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Customer Name */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              name="customer_name"
-              value={formData.customer_name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
+          {[
+            { label: "Full Name", name: "customer_name", type: "text" },
+            { label: "Phone Number", name: "phone", type: "tel" },
+            { label: "Pickup Location", name: "pickup_location", type: "text" },
+            {
+              label: "Dropoff Location",
+              name: "dropoff_location",
+              type: "text",
+            },
+            { label: "Pickup Date", name: "pickup_date", type: "date" },
+            { label: "Pickup Time", name: "pickup_time", type: "time" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                {field.label} *
+              </label>
+              <input
+                type={field.type}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={handleChange}
+                className={`w-full border rounded-md p-2 focus:ring-1 outline-none ${
+                  errors[field.name]
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-500 focus:ring-gray-400"
+                }`}
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[field.name]}
+                </p>
+              )}
+            </div>
+          ))}
 
-          {/* Phone */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Phone Number *
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="07XXXXXXXX"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Pickup */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Pickup Location *
-            </label>
-            <input
-              type="text"
-              name="pickup_location"
-              value={formData.pickup_location}
-              onChange={handleChange}
-              placeholder="Enter pickup location"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Dropoff */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Dropoff Location *
-            </label>
-            <input
-              type="text"
-              name="dropoff_location"
-              value={formData.dropoff_location}
-              onChange={handleChange}
-              placeholder="Enter dropoff location"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Pickup Time */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Pickup Time *
-            </label>
-            <input
-              type="datetime-local"
-              name="pickup_time"
-              value={formData.pickup_time}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          {/* Passengers */}
-          <div className="col-span-1">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Number of Passengers *
+          {/* Passengers + Notes side-by-side */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Passengers *
             </label>
             <input
               type="number"
               name="passengers"
+              min="1"
               value={formData.passengers}
               onChange={handleChange}
-              min="1"
-              placeholder="Enter number of passengers"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              placeholder="Number of passengers"
+              className={`w-full border rounded-md p-2 focus:ring-1 outline-none ${
+                errors.passengers
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-500 focus:ring-gray-400"
+              }`}
             />
+            {errors.passengers && (
+              <p className="text-red-500 text-sm mt-1">{errors.passengers}</p>
+            )}
           </div>
 
-          {/* Notes (Full width) */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Additional Notes (optional)
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Additional Notes
             </label>
             <textarea
               name="notes"
               value={formData.notes}
               onChange={handleChange}
-              placeholder="Any additional information..."
-              rows="3"
-              className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              rows="2"
+              placeholder="Optional..."
+              className="w-full border border-gray-500 rounded-md p-2 focus:ring-1 focus:ring-gray-400 outline-none resize-none"
             ></textarea>
           </div>
 
-          {/* Submit button */}
-          <div className="col-span-1 md:col-span-2">
+          <div className="md:col-span-2">
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-3 text-white text-lg font-medium rounded-md transition ${
+              className={`w-full py-3 text-white text-lg rounded-md transition ${
                 loading
                   ? "bg-blue-300 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"

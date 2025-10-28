@@ -4,7 +4,7 @@ import Vehicle from "../models/Vehicle.js";
 export const getAllVehicles = async (req, res) => {
   try {
     const vehicles = await Vehicle.findAll({
-      attributes: ["id", "plate", "vehicle_type", "capacity"],
+      attributes: ["id", "plate", "type", "capacity"],
       order: [["plate", "ASC"]],
     });
 
