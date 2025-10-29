@@ -63,9 +63,9 @@ const Login = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={() => setRole("admin")}
-                className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+                className="bg-black text-white py-2 rounded-md hover:bg-gray-700 transition"
               >
-                Admin / Coordinator
+                Coordinator
               </button>
               <button
                 onClick={() => navigate("/customer")}
@@ -101,7 +101,7 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-gray-400"
                   placeholder="Enter your email"
                 />
               </div>
@@ -115,7 +115,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-gray-400"
                   placeholder="Enter your password"
                 />
               </div>
@@ -125,8 +125,8 @@ const Login = () => {
                 disabled={loading}
                 className={`w-full py-2 text-white font-medium rounded-md transition ${
                   loading
-                    ? "bg-blue-300 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-black hover:bg-gray-700"
                 }`}
               >
                 {loading ? "Signing in..." : "Login"}
