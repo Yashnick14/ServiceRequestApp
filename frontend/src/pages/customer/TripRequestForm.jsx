@@ -207,8 +207,8 @@ const TripRequestForm = () => {
               disabled={loading}
               className={`w-full py-3 text-white text-lg rounded-md transition ${
                 loading
-                  ? "bg-blue-300 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-black hover:bg-gray-700"
               }`}
             >
               {loading ? "Submitting..." : "Submit Request"}

@@ -1,0 +1,271 @@
+{
+	"info": {
+		"_postman_id": "9d1b6676-fe5a-44b9-8e86-05e90d28408b",
+		"name": "CoachService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46347201"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"admin@coach.com\",\r\n    \"password\": \"admin123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Requests",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGNvYWNoLmNvbSIsImlhdCI6MTc2MTgwMjExMiwiZXhwIjoxNzYxODA1NzEyfQ.CcWamaL2w2R9PxnHIZ8wKM_ZOO0B-i2eM5OFJ3Cj7SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/requests/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"requests",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Requests",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGNvYWNoLmNvbSIsImlhdCI6MTc2MTgwMjExMiwiZXhwIjoxNzYxODA1NzEyfQ.CcWamaL2w2R9PxnHIZ8wKM_ZOO0B-i2eM5OFJ3Cj7SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": \"approved\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/requests/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"requests",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Requests",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGNvYWNoLmNvbSIsImlhdCI6MTc2MTgwMjExMiwiZXhwIjoxNzYxODA1NzEyfQ.CcWamaL2w2R9PxnHIZ8wKM_ZOO0B-i2eM5OFJ3Cj7SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/requests/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"requests",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Requests",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"customer_name\": \"Thalib\",\r\n  \"phone\": \"0771234567\",\r\n  \"pickup_location\": \"Colombo\",\r\n  \"dropoff_location\": \"Kandy\",\r\n  \"pickup_time\": \"2025-10-31 09:30:00\",\r\n  \"passengers\": 5,\r\n  \"notes\": \"Need AC bus\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/requests",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Schedule Assignments",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGNvYWNoLmNvbSIsImlhdCI6MTc2MTgwMjExMiwiZXhwIjoxNzYxODA1NzEyfQ.CcWamaL2w2R9PxnHIZ8wKM_ZOO0B-i2eM5OFJ3Cj7SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"request_id\": 4,\r\n  \"driver_id\": 2,\r\n  \"vehicle_id\": 1,\r\n  \"scheduled_time\": \"2025-11-01 10:30:00\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/assignments/2/schedule",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"assignments",
+						"2",
+						"schedule"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Daily Analytics",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGNvYWNoLmNvbSIsImlhdCI6MTc2MTgwMjExMiwiZXhwIjoxNzYxODA1NzEyfQ.CcWamaL2w2R9PxnHIZ8wKM_ZOO0B-i2eM5OFJ3Cj7SU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/analytics/daily",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"analytics",
+						"daily"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Drivers",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Vehicles",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
