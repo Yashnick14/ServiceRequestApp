@@ -14,6 +14,11 @@ Customers can submit trip requests, and coordinators can manage, approve, reject
 **Styling:** CSS  
 **Environment:** `.env` for secrets
 
+## Database Note
+
+This project uses **MySQL** as the database. For local development, MySQL is run through **XAMPP**.  
+Make sure XAMPP is running and the database is created as per the instructions in the `.env.example` file before starting the backend.
+
 ---
 
 ### API Endpoints Implemented
