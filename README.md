@@ -16,6 +16,18 @@ Customers can submit trip requests, and coordinators can manage, approve, reject
 
 ---
 
+### API Endpoints Implemented
+
+- `POST /service_requests` → create request
+- `GET /service_requests` → list requests with pagination
+- `PUT /service_requests/:id` → update request
+- `DELETE /service_requests/:id` → delete request
+- `GET /drivers` → read-only
+- `GET /vehicles` → read-only
+- `GET /analytics/daily` → returns count of new requests for last 7 days
+- Input validation with clear error messages and consistent JSON shape
+- Correct HTTP status codes used
+
 ## Features
 
 ### Customer
@@ -34,28 +46,52 @@ Customers can submit trip requests, and coordinators can manage, approve, reject
 
 ---
 
-## Project Structure
+## Running the Service Request App
 
-ServiceRequestApp/
-├── backend/
-│ ├── src/
-│ │ ├── config/
-│ │ ├── controllers/
-│ │ ├── middleware/
-│ │ ├── models/
-│ │ ├── routes/
-│ │ ├── app.js
-│ │ └── server.js
-│ ├── .env.example
-│ └── package.json
-└── frontend/
-├── src/
-│ ├── components/
-│ ├── pages/
-│ ├── services/
-│ ├── App.jsx
-│ └── main.jsx
-├── screenshots/
-│ ├── customer_form.png
-│ └── admin_panel.png
-└── package.json
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- npm (v9+ recommended)
+- Git
+
+---
+
+# Install root dependencies
+
+```bash
+git clone https://github.com/Yashnick14/ServiceRequestApp.git
+cd ServiceRequestApp
+
+# Install root dependencies
+npm install
+
+# Install backend dependencies
+cd backend
+npm install
+cd ..
+
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+
+# From root folder
+npm start
+```
+
+### Quality Gates Implemented
+
+- Linter + Prettier configured
+- Logging middleware for method, path, status, and duration
+- One unit test for a pure function and one API route
+- Clear and meaningful commit history
+
+### Deliverables Completed
+
+- Repository with code and README
+- Screenshots of customer form and admin panel included under screenshots folder
+- Postman collection for APIs under postman folder
+- Seed scripts for drivers and vehicles
+- Test results output under screenshots/TestResults
+- `.env.example` provided
+- Single command to start frontend and backend
